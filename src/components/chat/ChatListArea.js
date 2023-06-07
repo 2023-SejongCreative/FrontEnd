@@ -1,10 +1,17 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import Divider from "@mui/material/Divider";
-import ListItemText from "@mui/material/ListItemText";
+// import List from "@mui/material/List";
+// import ListItem from "@mui/material/ListItem";
+// import Divider from "@mui/material/Divider";
+// import ListItemText from "@mui/material/ListItemText";
+import {
+  TextField,
+  List,
+  ListItem,
+  Divider,
+  ListItemText,
+} from "@mui/material";
 
 import ModalDmCreate from "./ModalDmCreate";
 import styled from "styled-components";
@@ -18,27 +25,19 @@ const MyListItem = styled(ListItem)`
   &.selected {
     background-color: rgba(245, 182, 108, 0.2);
   }
+  font-family: "Acme", sans-serif;
 `;
 const ChatListArea = (props) => {
   const navigate = useNavigate();
   const { dm_id } = useParams();
   const [chatList, setChatList] = useState([]);
-  // let chatList = [
-  //   { id: 1, name: "채팅방1", lastChat: "오 진짜?" },
-  //   { id: 2, name: "채팅방2", lastChat: "뭐 있어?" },
-  //   { id: 3, name: "채팅방3", lastChat: "망해써~" },
-  //   { id: 4, name: "채팅방4", lastChat: "노노" },
-  //   { id: 5, name: "채팅방5", lastChat: "당연" },
-  //   { id: 6, name: "채팅방6", lastChat: "엥" },
-  //   { id: 7, name: "채팅방7", lastChat: "괜찮당께" },
-  //   { id: 8, name: "채팅방8", lastChat: "으갸갸갹" },
-  // ];
+  const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
     // 페이지가 렌더링 될 때 채팅 목록 불러오는 함수 호출
-
     getChatList();
-  }, []);
+  }, [dm_id]);
+
   const getChatList = async () => {
     api
       .get("/chat/chatlist")
@@ -56,12 +55,16 @@ const ChatListArea = (props) => {
       state: { chatList: chatList, dmID: dmID, dmName: dmName },
     });
   };
-  // if (!chatList) {
-  //   return <div></div>;
-  // }
+
   return (
     <>
-      <List sx={{ width: "100%", maxWidth: 300, bgcolor: "background.paper" }}>
+      <List
+        sx={{
+          width: "100%",
+          maxWidth: 300,
+          bgcolor: "background.paper",
+        }}
+      >
         <ModalDmCreate />
 
         {/* <Divider
@@ -69,27 +72,59 @@ const ChatListArea = (props) => {
             borderColor: "DarkGrey",
           }}
         /> */}
-
+        <TextField
+          // id="standard-search"
+          label="채팅방을 검색하세요"
+          type="search"
+          variant="standard"
+          size="small"
+          value={keyword}
+          onChange={(e) => {
+            setKeyword(e.target.value);
+          }}
+        />
         {/* 채팅 리스트들 나열 시작 */}
-        <List>
-          {chatList.map((v, i) => (
-            <List key={v.id}>
-              <MyListItem
-                alignItems="flex-start"
-                // 클릭하면 dm id 넘겨주기
-                onClick={() => moveDMRoom(v.id, v.name)}
-                className={dm_id == v.id ? "selected" : ""}
-              >
-                <ListItemText primary={v.name} secondary={v.lastChat} />
-              </MyListItem>
-              <Divider
-                sx={{
-                  borderColor: "grey",
-                }}
-              />
-            </List>
-          ))}
-        </List>
+        {chatList.length === 0 ? (
+          <>
+            <p
+              style={{
+                marginTop: 200,
+                padding: 40,
+                textAlign: "center",
+                fontSize: 20,
+                marginRight: 20,
+              }}
+            >
+              채팅방을 생성하세요
+            </p>
+            <h1 style={{ visibility: "hidden" }}>
+              <br />
+              <br />
+              <br />
+              <br />
+            </h1>
+          </>
+        ) : (
+          <List>
+            {chatList.map((v, i) => (
+              <List key={v.id}>
+                <MyListItem
+                  alignItems="flex-start"
+                  // 클릭하면 dm id 넘겨주기
+                  onClick={() => moveDMRoom(v.id, v.name)}
+                  className={dm_id == v.id ? "selected" : ""}
+                >
+                  <ListItemText primary={v.name} secondary={v.last_chat} />
+                </MyListItem>
+                <Divider
+                  sx={{
+                    borderColor: "grey",
+                  }}
+                />
+              </List>
+            ))}
+          </List>
+        )}
       </List>
       {/* 이렇게 안 하고 dmDetail페이지를 만들어서 페이지 이동? */}
       {/* <InDM /> */}

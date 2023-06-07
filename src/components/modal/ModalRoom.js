@@ -8,6 +8,9 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 
 import { api } from "../../api/Interceptors";
+import { InputTextInModal, InputCheckInModal } from "../commons/InputInModal";
+import { BtnInModal } from "../commons/BtnInModal";
+import { StyleRadio, StyleLabel } from "../../components/plan/ModalPlan";
 
 const style = {
   position: "absolute",
@@ -27,11 +30,11 @@ const Wrapper = styled.div`
 `;
 const Button = styled.button`
   width: 200px;
-  height: 50px;
+  height: 40px;
   border: none;
   border-radius: 10px;
   background-color: #f5b66c;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: bold;
   margin: auto;
   :hover {
@@ -87,36 +90,38 @@ const ModalRoom = (props) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} onSubmit={createRoom}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            룸 생성
-          </Typography>
+          <h2 style={{ textAlign: "center" }}>룸 생성</h2>
           <form>
             룸 이름 :{" "}
-            <input
+            <InputTextInModal
               type="text"
               label="룸 이름"
               value={room_name}
               onChange={(e) => setRoom_name(e.target.value)}
             />
-            <div>
-              <input
-                type="radio"
-                name="공개여부"
-                value="1"
-                checked
-                onClick={() => setType(1)}
-              />
-              public
-              <input
-                type="radio"
-                name="공개여부"
-                value="0"
-                onClick={() => setType(0)}
-              />
-              private
+            <div style={{ textAlign: "center", margin: 15 }}>
+              <StyleLabel>
+                <StyleRadio
+                  type="radio"
+                  name="공개여부"
+                  value="1"
+                  checked
+                  onClick={() => setType(1)}
+                />
+                public
+              </StyleLabel>
+              <StyleLabel>
+                <StyleRadio
+                  type="radio"
+                  name="공개여부"
+                  value="0"
+                  onClick={() => setType(0)}
+                />
+                private
+              </StyleLabel>
             </div>
-            <p>
-              <input type="submit" value="생성" />
+            <p style={{ textAlign: "center" }}>
+              <BtnInModal type="submit" value="생성" />
             </p>
           </form>
         </Box>

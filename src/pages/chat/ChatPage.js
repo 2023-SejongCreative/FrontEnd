@@ -27,10 +27,6 @@ const ChatPage = () => {
                 borderColor: "DarkGrey",
               }}
             />
-            {/* <Typography align="center" margin="auto">
-                <h3>채팅방을 선택하세요</h3>
-              </Typography> */}
-            {/* 선택된 채팅방 내용 */}
           </Grid>
         </Box>
       </Box>

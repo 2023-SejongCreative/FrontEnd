@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 
 import UserVideoComponent from "./UserVideoComponent";
 import { api } from "../../api/Interceptors";
+import { InputTextInModal } from "../../components/commons/InputInModal";
+import { BtnInModal, ButtonInModal } from "../../components/commons/BtnInModal";
 
 function withParams(Component) {
   return (props) => <Component {...props} params={useParams()} />;
@@ -12,16 +14,24 @@ function withParams(Component) {
 class VideoPage extends Component {
   constructor(props) {
     super(props);
-
+    this.userRef = React.createRef(); //여기 추가
+    const { dm_id } = this.props.params;
+    console.log(dm_id);
     // These properties are in the state's component in order to re-render the HTML whenever their values change
     this.state = {
-      mySessionId: "Waffle",
-      myUserName: "유저이름",
+      mySessionId: "SessionA",
+      myUserName: "OpenVidu_User_" + Math.floor(Math.random() * 100),
       session: undefined,
       mainStreamManager: undefined, // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
       publisher: undefined,
       subscribers: [],
       response_session_id: "",
+
+      //이 밑에 네줄 추가
+      isMike: true,
+      isCamera: true,
+      isSpeaker: true,
+      isChat: false,
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -31,6 +41,7 @@ class VideoPage extends Component {
     this.handleChangeUserName = this.handleChangeUserName.bind(this);
     this.handleMainVideoStream = this.handleMainVideoStream.bind(this);
     this.onbeforeunload = this.onbeforeunload.bind(this);
+    // this.handleToggle = this.handleToggle.bind(this); //이부분 추가
   }
 
   componentDidMount() {
@@ -78,10 +89,26 @@ class VideoPage extends Component {
 
   joinSession() {
     // --- 1) Get an OpenVidu object ---
+    console.log("조인세션 함수실행!");
+    const { dm_id } = this.props.params;
+    console.log(dm_id);
+    api
+      .post("/chat/session/enter", { id: dm_id })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => console.log(err));
 
     this.OV = new OpenVidu();
 
     // --- 2) Init a session ---
+    //이 부분 추가
+    this.OV.setAdvancedConfiguration({
+      publisherSpeakingEventsOptions: {
+        interval: 50,
+        threshold: -75,
+      },
+    });
 
     this.setState(
       {
@@ -117,6 +144,37 @@ class VideoPage extends Component {
           console.warn(exception);
         });
 
+        //이부분 추가 publisherStartSpeaking, publisherStopSpeaking 이부분
+        // 발언자 감지
+        // mySession.on("publisherStartSpeaking", (event) => {
+        //   for (let i = 0; i < this.userRef.current.children.length; i++) {
+        //     if (
+        //       JSON.parse(event.connection.data).clientData ===
+        //       this.userRef.current.children[i].innerText
+        //     ) {
+        //       this.userRef.current.children[i].style.borderStyle = "solid";
+        //       this.userRef.current.children[i].style.borderColor = "#1773EA";
+        //     }
+        //   }
+        //   console.log(
+        //     "User " + event.connection.connectionId + " start speaking"
+        //   );
+        // });
+
+        // mySession.on("publisherStopSpeaking", (event) => {
+        //   console.log(
+        //     "User " + event.connection.connectionId + " stop speaking"
+        //   );
+        //   for (let i = 0; i < this.userRef.current.children.length; i++) {
+        //     if (
+        //       JSON.parse(event.connection.data).clientData ===
+        //       this.userRef.current.children[i].innerText
+        //     ) {
+        //       this.userRef.current.children[i].style.borderStyle = "none";
+        //     }
+        //   }
+        // });
+
         // --- 4) Connect to the session with a valid user token ---
 
         // Get a token from the OpenVidu deployment
@@ -139,7 +197,8 @@ class VideoPage extends Component {
                 resolution: "640x480", // The resolution of your video
                 frameRate: 30, // The frame rate of your video
                 insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-                mirror: false, // Whether to mirror your local video or not
+                //이부분 수정 false->"false"로 변경
+                mirror: "false", // Whether to mirror your local video or not
               });
 
               // --- 6) Publish your stream ---
@@ -178,9 +237,15 @@ class VideoPage extends Component {
     );
   }
 
-  leaveSession() {
+  leaveSession(dm_id) {
     // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
 
+    api
+      .post("/chat/session/leave", { id: dm_id })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => console.log(err));
     const mySession = this.state.session;
 
     if (mySession) {
@@ -192,8 +257,10 @@ class VideoPage extends Component {
     this.setState({
       session: undefined,
       subscribers: [],
-      mySessionId: "Waffle",
-      myUserName: "유저네임",
+      // mySessionId: "Waffle",
+      // myUserName: "유저네임",
+      mySessionId: undefined,
+      myUserName: undefined,
       mainStreamManager: undefined,
       publisher: undefined,
     });
@@ -245,7 +312,14 @@ class VideoPage extends Component {
     return (
       <div className="container">
         {this.state.session === undefined ? (
-          <div id="join">
+          <div
+            id="join"
+            style={{
+              justifyContent: "center",
+              textAlign: "center",
+              alignItems: "center",
+            }}
+          >
             <div id="img-div"></div>
             <div id="join-dialog" className="jumbotron vertical-center">
               <h1> "채팅방 이름" in Waffle </h1>
@@ -263,7 +337,7 @@ class VideoPage extends Component {
                 </p>
                 <p>
                   <label> 화상회의실 이름: </label>
-                  <input
+                  <InputTextInModal
                     className="form-control"
                     type="text"
                     id="sessionId"
@@ -273,7 +347,7 @@ class VideoPage extends Component {
                   />
                 </p>
                 <p className="text-center">
-                  <input
+                  <BtnInModal
                     className="btn btn-lg btn-success"
                     name="commit"
                     type="submit"
@@ -289,19 +363,26 @@ class VideoPage extends Component {
           <div id="session">
             <div id="session-header">
               <h1 id="session-title">{mySessionId}</h1>
-              <input
+              <ButtonInModal
                 className="btn btn-large btn-danger"
                 type="button"
                 id="buttonLeaveSession"
                 onClick={this.leaveSession}
                 value="Leave session"
               />
-              <input
+              <ButtonInModal
                 className="btn btn-large btn-success"
                 type="button"
                 id="buttonSwitchCamera"
                 onClick={this.switchCamera}
                 value="Switch Camera"
+              />
+              <ButtonInModal
+                className="btn btn-large btn-success"
+                type="button"
+                id="buttonSwitchMic"
+                onClick={this.switchCamera}
+                value="Switch Mic"
               />
             </div>
 
@@ -362,10 +443,11 @@ class VideoPage extends Component {
   }
 
   async createSession(sessionId) {
+    const { dm_id } = this.props.params;
     console.log("세션 생성 함수");
     const response = await api.post(
       "/chat/session",
-      { session_name: sessionId },
+      { session_name: sessionId, id: dm_id },
       {}
     );
     this.response_session_id = response.data;

@@ -9,6 +9,8 @@ import { TextField } from "@mui/material";
 import Modal from "@mui/material/Modal";
 
 import { api } from "../../api/Interceptors";
+import { InputTextInModal, InputCheckInModal } from "../commons/InputInModal";
+import { BtnInModal } from "../commons/BtnInModal";
 
 const style = {
   position: "absolute",
@@ -16,7 +18,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 600,
-  height: 500,
+  height: 550,
   bgcolor: "background.paper",
   boxShadow: 24,
   borderRadius: 3,
@@ -26,14 +28,15 @@ const style = {
 const Wrapper = styled.div`
   text-align: center;
 `;
-const Button = styled.button`
+export const Button = styled.button`
   width: 30px;
   height: 30px;
   color: white;
+  font-weight: bold;
   border: none;
   border-radius: 50%;
   background-color: #f2c8a1;
-  font-size: 25px;
+  font-size: 20px;
 
   margin: auto;
   :hover {
@@ -42,7 +45,7 @@ const Button = styled.button`
   margin: 15px;
 `;
 const DMcreateInput = styled.input`
-  margin: 10px;
+  margin: 5px;
 `;
 
 const ModalDmCreate = () => {
@@ -58,7 +61,9 @@ const ModalDmCreate = () => {
   const handleClose = () => setOpen(false);
 
   //채팅방 생성 post함수
-  const createDm = () => {
+  const createDm = (e) => {
+    e.preventDefault();
+
     let emailArray = [];
     if (sendToWho1 !== "") emailArray.push(sendToWho1);
     if (sendToWho2 !== "") emailArray.push(sendToWho2);
@@ -77,13 +82,13 @@ const ModalDmCreate = () => {
           console.log("채팅방 생성!", response);
           // 요 밑에 채팅방 아이디 받으면(dmID) dm방에 id 세팅할 것
           handleClose();
-          navigate("/chat");
-          // navigate(`/chat/${response.body}`, {
-          //   state: {
-          //     dmID: response.body,
-          //     dmName: dmName,
-          //   },
-          // });
+          //navigate("/chat");
+          navigate(`/chat/${response.data}`, {
+            state: {
+              dmID: response.data,
+              dmName: dmName,
+            },
+          });
         })
         .catch((err) => console.log(err));
     }
@@ -91,14 +96,14 @@ const ModalDmCreate = () => {
   return (
     <div>
       <Wrapper>
-        <TextField
+        {/* <TextField
           id="standard-search"
           label="Search field"
           type="search"
           variant="standard"
           size="small"
-        />
-        <Button onClick={handleOpen}>+{/* <AddIcon /> */}</Button>
+        /> */}
+        <Button onClick={handleOpen}>+</Button>
       </Wrapper>
 
       <Modal
@@ -108,20 +113,13 @@ const ModalDmCreate = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} onSubmit={createDm}>
-          <Typography
-            style={{ textAlign: "center", fontSize: "30px", margin: "10px" }}
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-          >
-            채팅방 생성
-          </Typography>
+          <h2 style={{ textAlign: "center", margin: "15px" }}>채팅방 생성</h2>
           <form style={{ textAlign: "center" }}>
             <div style={{ margin: "10px" }}>
               {" "}
               채팅방 이름{" "}
               <div>
-                <DMcreateInput
+                <InputTextInModal
                   type="text"
                   label="채팅방 이름"
                   value={dmName}
@@ -133,7 +131,7 @@ const ModalDmCreate = () => {
             <div>
               채팅할 사람{" "}
               <div>
-                <DMcreateInput
+                <InputTextInModal
                   type="text"
                   label="채팅대상"
                   value={sendToWho1}
@@ -145,7 +143,7 @@ const ModalDmCreate = () => {
                 />
               </div>
               <div>
-                <DMcreateInput
+                <InputTextInModal
                   type="text"
                   label="채팅대상"
                   value={sendToWho2}
@@ -156,7 +154,7 @@ const ModalDmCreate = () => {
                 />
               </div>
               <div>
-                <DMcreateInput
+                <InputTextInModal
                   type="text"
                   label="채팅대상"
                   value={sendToWho3}
@@ -167,7 +165,7 @@ const ModalDmCreate = () => {
                 />
               </div>
               <div>
-                <DMcreateInput
+                <InputTextInModal
                   type="text"
                   label="채팅대상"
                   value={sendToWho4}
@@ -178,7 +176,7 @@ const ModalDmCreate = () => {
                 />
               </div>
               <div>
-                <DMcreateInput
+                <InputTextInModal
                   type="text"
                   label="채팅대상"
                   value={sendToWho5}
@@ -190,7 +188,7 @@ const ModalDmCreate = () => {
               </div>
             </div>
             <p>
-              <input type="submit" value="생성" />
+              <BtnInModal type="submit" value="생성" />
             </p>
           </form>
         </Box>

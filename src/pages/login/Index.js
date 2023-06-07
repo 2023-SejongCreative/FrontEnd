@@ -56,14 +56,18 @@ const Index = () => {
           );
           localStorage.setItem("isLogined", true);
           localStorage.setItem("email", email);
+          localStorage.setItem("id", response.data);
           // setTimeout(onSlientRefresh, 1500000);
-        } else if (response.response.data.code === "LOGIN-001") {
-          alert("일치하는 회원이 없습니다. 먼저 회원가입을 진행해주세요!");
-        } else if (response.response.data.code === "LOGIN-002") {
-          alert("비밀번호가 일치하지 않습니다.");
         }
       })
-      .catch((error) => console.error("Error:", error));
+      .catch((error) => {
+        console.error("Error:", error);
+        if (error.response.data.code === "LOGIN-001")
+          alert("일치하는 회원이 없습니다. 먼저 회원가입을 진행해주세요!");
+        else if (error.response.data.code === "LOGIN-002") {
+          alert("비밀번호가 일치하지 않습니다.");
+        }
+      });
   };
 
   const onSlientRefresh = () => {

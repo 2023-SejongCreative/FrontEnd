@@ -62,7 +62,7 @@ import { api } from "../../api/Interceptors";
 const ChatDetail = () => {
   const { dm_id } = useParams();
   const location = useLocation();
-  const dmID = location.state.dmID;
+  // const dmID = location.state.dmID;
   const dmName = location.state.dmName;
   // const chatList = location.state.chatList;
 

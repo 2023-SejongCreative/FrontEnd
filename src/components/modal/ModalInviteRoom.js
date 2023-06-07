@@ -7,6 +7,8 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 
 import { api } from "../../api/Interceptors";
+import { InputTextInModal, InputCheckInModal } from "../commons/InputInModal";
+import { BtnInModal } from "../commons/BtnInModal";
 
 const style = {
   position: "absolute",
@@ -26,11 +28,11 @@ const Wrapper = styled.div`
 `;
 const Button = styled.button`
   width: 200px;
-  height: 50px;
+  height: 40px;
   border: none;
   border-radius: 10px;
   background-color: #f5b66c;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: bold;
   margin: auto;
   margin-bottom: 10px;
@@ -58,7 +60,12 @@ const ModalInviteRoom = (props) => {
           alert(`${inviteEmail} 님을 초대하였습니다.`);
         handleClose();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        if (err.response.status === 409) alert("이미 초대된 사용자입니다.");
+        else if (err.response.status === 400)
+          alert("그룹에 없는 사용자입니다.");
+      });
   };
 
   return (
@@ -77,19 +84,17 @@ const ModalInviteRoom = (props) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} onSubmit={InviteRoom}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            룸에 사용자 초대
-          </Typography>
+          <h2 style={{ textAlign: "center" }}>룸에 사용자 초대</h2>
           <form>
             초대 이메일
-            <input
+            <InputTextInModal
               type="text"
               label="초대자 이메일"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
             />
-            <p>
-              <input type="submit" value="초대하기" />
+            <p style={{ textAlign: "center" }}>
+              <BtnInModal type="submit" value="초대하기" />
             </p>
           </form>
         </Box>

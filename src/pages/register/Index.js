@@ -59,11 +59,15 @@ const Index = () => {
           if (response.status === 200) {
             alert("회원가입에 성공하셨습니다. 로그인을 진행해주세요! ");
             navigate("/login");
-          } else if (response.status === 400) {
+          } else {
             alert("이미 회원가입 완료한 이메일입니다.");
           }
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => {
+          console.error("Error:", error);
+          if (error.response.data.status === 409)
+            alert("이미 회원가입 완료한 이메일입니다.");
+        });
     }
   };
 
