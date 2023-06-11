@@ -11,7 +11,7 @@ export default class UserVideoComponent extends Component {
 
   render() {
     return (
-      <div>
+      <div className="all">
         {this.props.streamManager !== undefined ? (
           <div className="streamcomponent">
             <OpenViduVideoComponent streamManager={this.props.streamManager} />

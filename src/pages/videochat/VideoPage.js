@@ -375,7 +375,7 @@ class VideoPage extends Component {
           <div id="session">
             <div id="session-header">
               <h1 id="session-title">{mySessionId}</h1>
-              <ButtonInModal
+              {/* <ButtonInModal
                 className="btn btn-large btn-danger"
                 style={{ width: 200 }}
                 type="button"
@@ -383,15 +383,15 @@ class VideoPage extends Component {
                 onClick={this.leaveSession}
                 value="Leave session"
               />
-              {/* <ButtonInModal
+              <BsCameraVideoFill
                 className="btn btn-large btn-success"
-                style={{ width: 200 }}
+                style={{ width: 300 }}
                 type="button"
                 id="buttonSwitchCamera"
                 onClick={this.switchCamera}
                 value="Switch Camera"
               /> */}
-              {this.isCamera ? (
+              {/* {this.isCamera ? (
                 <BsCameraVideoFill
                   className="btn btn-large btn-success"
                   style={{ width: 200, fontSize: 30 }}
@@ -409,17 +409,16 @@ class VideoPage extends Component {
                   onClick={this.switchCamera}
                   value="Switch Camera"
                 />
-              )}
-              {/* <ButtonInModal
+              )} */}
+              {/* <BsFillMicFill
                 className="btn btn-large btn-success"
                 style={{ width: 200 }}
                 type="button"
                 id="buttonSwitchMic"
                 //여기변경
-                onClick={(this.isMike = false)}
                 value="Switch Mic"
               /> */}
-              {this.isMike ? (
+              {/* {this.isMike ? (
                 <BsFillMicFill
                   className="btn btn-large btn-success"
                   style={{ width: 200 }}
@@ -439,7 +438,7 @@ class VideoPage extends Component {
                   onClick={this.switchAudio}
                   value="Switch Mic"
                 />
-              )}
+              )} */}
             </div>
 
             {/* {this.state.mainStreamManager !== undefined ? (
