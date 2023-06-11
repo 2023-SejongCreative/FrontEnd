@@ -2,6 +2,13 @@ import React, { Component } from "react";
 import { OpenVidu } from "openvidu-browser";
 import { useParams } from "react-router-dom";
 
+import {
+  BsFillMicFill,
+  BsFillMicMuteFill,
+  BsCameraVideoFill,
+  BsCameraVideoOffFill,
+} from "react-icons/bs";
+
 import UserVideoComponent from "./UserVideoComponent";
 import { api } from "../../api/Interceptors";
 import { InputTextInModal } from "../../components/commons/InputInModal";
@@ -194,7 +201,7 @@ class VideoPage extends Component {
                 videoSource: undefined, // The source of video. If undefined default webcam
                 publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
                 publishVideo: true, // Whether you want to start publishing with your video enabled or not
-                resolution: "640x480", // The resolution of your video
+                resolution: "320x240", // The resolution of your video
                 frameRate: 30, // The frame rate of your video
                 insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
                 //이부분 수정 false->"false"로 변경
@@ -284,7 +291,8 @@ class VideoPage extends Component {
           var newPublisher = this.OV.initPublisher(undefined, {
             videoSource: newVideoDevice[0].deviceId,
             publishAudio: true,
-            publishVideo: true,
+            //여기변경
+            publishVideo: false,
             mirror: true,
           });
 
@@ -348,6 +356,7 @@ class VideoPage extends Component {
                 </p>
                 <p className="text-center">
                   <BtnInModal
+                    style={{ width: 200 }}
                     className="btn btn-lg btn-success"
                     name="commit"
                     type="submit"
@@ -365,6 +374,7 @@ class VideoPage extends Component {
               <h1 id="session-title">{mySessionId}</h1>
               <ButtonInModal
                 className="btn btn-large btn-danger"
+                style={{ width: 200 }}
                 type="button"
                 id="buttonLeaveSession"
                 onClick={this.leaveSession}
@@ -372,29 +382,72 @@ class VideoPage extends Component {
               />
               <ButtonInModal
                 className="btn btn-large btn-success"
+                style={{ width: 200 }}
                 type="button"
                 id="buttonSwitchCamera"
                 onClick={this.switchCamera}
                 value="Switch Camera"
               />
-              <ButtonInModal
+              {this.isCamera ? (
+                <BsCameraVideoFill
+                  className="btn btn-large btn-success"
+                  style={{ width: 200 }}
+                  type="button"
+                  id="buttonSwitchCamera"
+                  onClick={this.switchCamera}
+                  value="Switch Camera"
+                />
+              ) : (
+                <BsCameraVideoOffFill
+                  className="btn btn-large btn-success"
+                  style={{ width: 200 }}
+                  type="button"
+                  id="buttonSwitchCamera"
+                  onClick={this.switchCamera}
+                  value="Switch Camera"
+                />
+              )}
+              {/* <ButtonInModal
                 className="btn btn-large btn-success"
+                style={{ width: 200 }}
                 type="button"
                 id="buttonSwitchMic"
-                onClick={this.switchCamera}
+                //여기변경
+                onClick={(this.isMike = false)}
                 value="Switch Mic"
-              />
+              /> */}
+              {this.isMike == true ? (
+                <BsFillMicFill
+                  className="btn btn-large btn-success"
+                  style={{ width: 200 }}
+                  type="button"
+                  id="buttonSwitchMic"
+                  //여기변경
+                  onClick={(this.isMike = false)}
+                  value="Switch Mic"
+                />
+              ) : (
+                <BsFillMicMuteFill
+                  className="btn btn-large btn-success"
+                  style={{ width: 200 }}
+                  type="button"
+                  id="buttonSwitchMic"
+                  //여기변경
+                  onClick={(this.isMike = true)}
+                  value="Switch Mic"
+                />
+              )}
             </div>
 
-            {this.state.mainStreamManager !== undefined ? (
+            {/* {this.state.mainStreamManager !== undefined ? (
               <div id="main-video" className="col-md-6">
                 <UserVideoComponent
                   streamManager={this.state.mainStreamManager}
                 />
               </div>
-            ) : null}
+            ) : null} */}
             <div id="video-container" className="col-md-6">
-              {this.state.publisher !== undefined ? (
+              {/* {this.state.publisher !== undefined ? (
                 <div
                   className="stream-container col-md-6 col-xs-6"
                   style={{ padding: 0 }}
@@ -404,10 +457,10 @@ class VideoPage extends Component {
                 >
                   <UserVideoComponent streamManager={this.state.publisher} />
                 </div>
-              ) : null}
+              ) : null} */}
               {this.state.subscribers.map((sub, i) => (
                 <div
-                  key={sub.id}
+                  key={i + JSON.parse(sub.stream.connection.data).clientData}
                   className="stream-container col-md-6 col-xs-6"
                   onClick={() => this.handleMainVideoStream(sub)}
                 >

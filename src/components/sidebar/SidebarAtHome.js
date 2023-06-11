@@ -18,7 +18,7 @@ import {
   useHeaderMenuStore,
   useTypeStore,
 } from "../../store/Store";
-import WaffleLogo from "../../assets/Waffle Logo.png";
+import WaffleLogo from "../../assets/WaffleLogo.png";
 
 export const MyTitle = styled.h1`
   /* margin */

@@ -20,7 +20,7 @@ import {
   useTypeStore,
 } from "../../store/Store";
 import { StyleMySpace } from "./SidebarAtHome";
-import WaffleLogo from "../../assets/Waffle Logo.png";
+import WaffleLogo from "../../assets/WaffleLogo.png";
 
 export const MyTitle = styled.h1`
   margin: 0;
