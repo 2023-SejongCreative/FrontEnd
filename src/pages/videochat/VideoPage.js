@@ -273,6 +273,10 @@ class VideoPage extends Component {
     });
   }
 
+  switchAudio() {
+    this.isMike = false;
+  }
+
   async switchCamera() {
     try {
       const devices = await this.OV.getDevices();
@@ -291,8 +295,7 @@ class VideoPage extends Component {
           var newPublisher = this.OV.initPublisher(undefined, {
             videoSource: newVideoDevice[0].deviceId,
             publishAudio: true,
-            //여기변경
-            publishVideo: false,
+            publishVideo: true,
             mirror: true,
           });
 
@@ -380,18 +383,18 @@ class VideoPage extends Component {
                 onClick={this.leaveSession}
                 value="Leave session"
               />
-              <ButtonInModal
+              {/* <ButtonInModal
                 className="btn btn-large btn-success"
                 style={{ width: 200 }}
                 type="button"
                 id="buttonSwitchCamera"
                 onClick={this.switchCamera}
                 value="Switch Camera"
-              />
+              /> */}
               {this.isCamera ? (
                 <BsCameraVideoFill
                   className="btn btn-large btn-success"
-                  style={{ width: 200 }}
+                  style={{ width: 200, fontSize: 30 }}
                   type="button"
                   id="buttonSwitchCamera"
                   onClick={this.switchCamera}
@@ -400,7 +403,7 @@ class VideoPage extends Component {
               ) : (
                 <BsCameraVideoOffFill
                   className="btn btn-large btn-success"
-                  style={{ width: 200 }}
+                  style={{ width: 200, fontSize: 30 }}
                   type="button"
                   id="buttonSwitchCamera"
                   onClick={this.switchCamera}
@@ -416,14 +419,14 @@ class VideoPage extends Component {
                 onClick={(this.isMike = false)}
                 value="Switch Mic"
               /> */}
-              {this.isMike == true ? (
+              {this.isMike ? (
                 <BsFillMicFill
                   className="btn btn-large btn-success"
                   style={{ width: 200 }}
                   type="button"
                   id="buttonSwitchMic"
                   //여기변경
-                  onClick={(this.isMike = false)}
+                  onClick={this.switchAudio}
                   value="Switch Mic"
                 />
               ) : (
@@ -433,7 +436,7 @@ class VideoPage extends Component {
                   type="button"
                   id="buttonSwitchMic"
                   //여기변경
-                  onClick={(this.isMike = true)}
+                  onClick={this.switchAudio}
                   value="Switch Mic"
                 />
               )}
